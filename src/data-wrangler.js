@@ -10,23 +10,15 @@ display.table = function () {
      }
 }
 
-async function main() {
+async function main(settings) {
     // Import libraries
     const turf = require('@turf/turf')
     const fs = require('fs')
     const mongodb = require('mongodb')
     const dataForge = require('data-forge')
     const msgpack = require('msgpack5')()
-    // Settings
-    const settings = {
-        city: 'mississauga',
-        startTime: 7 * 60 * 60, // 07:00:00 in seconds
-        endTime: 22 * 60 * 60, // 22:00:00 in seconds
-        mins: 10,
-        walkingRadius: 0.8 // km
-    }
     
-    const { city, startTime, endTime, mins, walkingRadius } = settings
+    const { city, startTime, endTime, mins, timeframe, walkingRadius } = settings
     
     display(settings)
     // Connect to DB
@@ -37,7 +29,7 @@ async function main() {
     const client = await mongodb.MongoClient.connect(url, { useUnifiedTopology: true })
     const db = client.db(dbName)
     console.log('connected!')
-    const stopsFile = `stops-${city}.json`
+    const stopsFile = `stops-${city}-${timeframe}.json`
     
     let stops = null
     if (!fs.existsSync(stopsFile)) {
@@ -123,7 +115,7 @@ async function main() {
         coordinates: points
     }
     const buffered = turf.buffer(geo, walkingRadius)
-    fs.writeFileSync(`${city}-allday-${mins}mins.msg`, msgpack.encode(buffered))
+    fs.writeFileSync(`${city}-${timeframe}-${mins}mins.msg`, msgpack.encode(buffered))
     
     const coords = {
         sydney: [-33.8688, 151.2093],
@@ -150,6 +142,20 @@ async function main() {
 
 }
 
-main()
-    .then(() => console.log("Done"))
-    .catch(err => console.error(err && err.stack || err));
+if (require.main === module) {
+    const settings = {
+        city: 'mississauga',
+        startTime: 7 * 60 * 60, // 07:00:00 in seconds
+        endTime: 22 * 60 * 60, // 22:00:00 in seconds
+        timeframe: 'allday',
+        mins: 10,
+        walkingRadius: 0.8 // km
+    }
+    main(settings)
+        .then(() => console.log("Done"))
+        .catch(err => console.error(err && err.stack || err));
+} 
+else {
+    module.exports = main
+}
+

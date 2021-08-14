@@ -1,0 +1,24 @@
+{
+    "name": "stop-frequency-nodejs-export",
+    "version": "1.0.0",
+    "description": "Data-Forge Notebook - A JavaScript notebook",
+    "main": "index.js",
+    "scripts": {
+        "start": "babel-node src/index.js",
+        "build": "babel src --out-dir dist"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.14.8",
+        "@babel/core": "^7.15.0",
+        "@babel/node": "^7.14.9",
+        "@babel/preset-env": "^7.15.0",
+        "@types/mongodb": "^4.0.7",
+        "@types/msgpack5": "^3.4.2"
+    },
+    "dependencies": {
+        "@turf/turf": "^6.5.0",
+        "data-forge": "^1.8.17",
+        "mongodb": "^4.1.0",
+        "msgpack5": "^5.3.2"
+    }
+}
